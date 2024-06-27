@@ -3,23 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tishihar <tishihar@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: tishihar <wingstonetone9.8@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/23 19:50:42 by tishihar          #+#    #+#             */
-/*   Updated: 2024/06/26 20:41:09 by tishihar         ###   ########.fr       */
+/*   Updated: 2024/06/27 18:47:37 by tishihar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char		*ft_strchr(const char *s, int c);
-char		*ft_strdup(const char *s1);
-char		*ft_strjoin(char const *s1, char const *s2);
-
 // kokokesu
-#define BUFFER_SIZE 42
+// #define BUFFER_SIZE 42
 
-static void	ft_grow_remainder(int fd, char **remainderBox)
+static int	ft_grow_remainder(int fd, char **remainderBox)
 {
 	char	buffer[BUFFER_SIZE + 1];
 	int		bytes_read;
@@ -33,15 +29,16 @@ static void	ft_grow_remainder(int fd, char **remainderBox)
 			// error hundling
 			free(*remainderBox);
 			*remainderBox = NULL;
-			return (NULL);
+			return (0);
 		}
 		buffer[bytes_read] = '\0';
 		new_remainder = ft_strjoin(*remainderBox, buffer);
 		free(*remainderBox);
 		*remainderBox = new_remainder;
 	}
+	return (1);
 }
-char	*ft_extract_line(char **remainderBox)
+static char	*ft_extract_line(char **remainderBox)
 {
 	char	*end;
 	char	*line;
@@ -50,7 +47,7 @@ char	*ft_extract_line(char **remainderBox)
 	end = ft_strchr(*remainderBox, '\n');
 	if (end)
 	{
-		end = '\0';
+		end = "\0";
 		line = ft_strdup(*remainderBox);
 		new_remainder = ft_strdup(end + 1);
 		free(remainderBox);
@@ -71,7 +68,8 @@ char	*get_next_line(int fd)
 
 	if (!*remainder)
 		remainder = ft_strdup("");
-	ft_grow_remainder(fd, &remainder);
+	if (ft_grow_remainder(fd, &remainder))
+		return (NULL);
 	// extract_oneline
 	return (ft_extract_line(&remainder));
 }
