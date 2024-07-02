@@ -6,7 +6,7 @@
 /*   By: tishihar <wingstonetone9.8@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/23 19:50:42 by tishihar          #+#    #+#             */
-/*   Updated: 2024/06/27 18:47:37 by tishihar         ###   ########.fr       */
+/*   Updated: 2024/07/02 17:48:56 by tishihar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,14 @@
 
 // kokokesu
 // #define BUFFER_SIZE 42
+
+
+static int	ft_handle_error(char **remainderBox)
+{
+	free(*remainderBox);
+	*remainderBox = NULL;
+	return (0);
+}
 
 static int	ft_grow_remainder(int fd, char **remainderBox)
 {
@@ -24,12 +32,12 @@ static int	ft_grow_remainder(int fd, char **remainderBox)
 	while (!ft_strchr(*remainderBox, '\n'))
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (bytes_read < 0)
+
+		if (bytes_read <= 0)
 		{
-			// error hundling
-			free(*remainderBox);
-			*remainderBox = NULL;
-			return (0);
+			if (bytes_read < 0 || **remainderBox == '\0')
+				return (ft_handle_error(remainderBox));
+			break;
 		}
 		buffer[bytes_read] = '\0';
 		new_remainder = ft_strjoin(*remainderBox, buffer);
@@ -47,15 +55,14 @@ static char	*ft_extract_line(char **remainderBox)
 	end = ft_strchr(*remainderBox, '\n');
 	if (end)
 	{
-		end = "\0";
-		line = ft_strdup(*remainderBox);
+		*end = '\0';
+		line = ft_strjoin(*remainderBox, "\n");
 		new_remainder = ft_strdup(end + 1);
-		free(remainderBox);
+		free(*remainderBox);
 		*remainderBox = new_remainder;
 	}
 	else
 	{
-		// last handling
 		line = ft_strdup(*remainderBox);
 		free(*remainderBox);
 		*remainderBox = NULL;
@@ -66,10 +73,43 @@ char	*get_next_line(int fd)
 {
 	static char	*remainder;
 
-	if (!*remainder)
+	if (!remainder)
 		remainder = ft_strdup("");
-	if (ft_grow_remainder(fd, &remainder))
+	if (!ft_grow_remainder(fd, &remainder))
 		return (NULL);
-	// extract_oneline
 	return (ft_extract_line(&remainder));
 }
+
+
+// #include <stdio.h>
+// #include <fcntl.h>
+// #include <unistd.h>
+// int main() {
+//     int fd;
+//     char *line;
+
+//     // ファイルを開く
+//     fd = open("sample.txt", O_RDONLY);
+// 	printf("fd: %d\n", fd);
+//     if (fd == -1) {
+//         perror("open");
+//         return 1;
+//     }
+
+//     // ファイルから1行ずつ読み込み、全ての行を出力する
+//     while ((line = get_next_line(fd)) != NULL) {
+//         printf("%s", line);
+// 		fflush(stdout);
+//         free(line); // get_next_line で動的に割り当てられたメモリを解放
+//     }
+
+
+
+
+
+
+//     // ファイルを閉じる
+//     close(fd);
+
+//     return 0;
+// }
