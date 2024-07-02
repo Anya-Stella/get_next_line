@@ -6,7 +6,7 @@
 /*   By: tishihar <wingstonetone9.8@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/23 19:50:42 by tishihar          #+#    #+#             */
-/*   Updated: 2024/07/02 17:48:56 by tishihar         ###   ########.fr       */
+/*   Updated: 2024/07/02 19:34:21 by tishihar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,11 @@
 // #define BUFFER_SIZE 42
 
 
-static int	ft_handle_error(char **remainderBox)
+static void	ft_clean_remainder(char **remainderBox)
 {
 	free(*remainderBox);
 	*remainderBox = NULL;
-	return (0);
 }
-
 static int	ft_grow_remainder(int fd, char **remainderBox)
 {
 	char	buffer[BUFFER_SIZE + 1];
@@ -32,20 +30,25 @@ static int	ft_grow_remainder(int fd, char **remainderBox)
 	while (!ft_strchr(*remainderBox, '\n'))
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
-
 		if (bytes_read <= 0)
 		{
 			if (bytes_read < 0 || **remainderBox == '\0')
-				return (ft_handle_error(remainderBox));
+				return (ft_clean_remainder(remainderBox), 0);
 			break;
 		}
 		buffer[bytes_read] = '\0';
 		new_remainder = ft_strjoin(*remainderBox, buffer);
+		if (!new_remainder)
+			return (ft_clean_remainder(remainderBox), 0);
 		free(*remainderBox);
 		*remainderBox = new_remainder;
 	}
 	return (1);
 }
+
+
+
+
 static char	*ft_extract_line(char **remainderBox)
 {
 	char	*end;
@@ -64,17 +67,31 @@ static char	*ft_extract_line(char **remainderBox)
 	else
 	{
 		line = ft_strdup(*remainderBox);
-		free(*remainderBox);
-		*remainderBox = NULL;
+		ft_clean_remainder(remainderBox);
 	}
+	if ((!*remainderBox && end) || !line)
+		{
+			if (line)
+				free(line);
+			return(ft_clean_remainder(remainderBox), NULL);
+		}
 	return (line);
 }
+
+
+
+
+
 char	*get_next_line(int fd)
 {
 	static char	*remainder;
 
 	if (!remainder)
+	{
 		remainder = ft_strdup("");
+		if (!remainder)
+			return (NULL);
+	}
 	if (!ft_grow_remainder(fd, &remainder))
 		return (NULL);
 	return (ft_extract_line(&remainder));
