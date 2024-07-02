@@ -6,7 +6,7 @@
 /*   By: tishihar <wingstonetone9.8@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/23 19:50:42 by tishihar          #+#    #+#             */
-/*   Updated: 2024/07/02 19:34:21 by tishihar         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:00:04 by tishihar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,35 +98,35 @@ char	*get_next_line(int fd)
 }
 
 
-// #include <stdio.h>
-// #include <fcntl.h>
-// #include <unistd.h>
-// int main() {
-//     int fd;
-//     char *line;
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+int main() {
+    int fd;
+    char *line;
 
-//     // ファイルを開く
-//     fd = open("sample.txt", O_RDONLY);
-// 	printf("fd: %d\n", fd);
-//     if (fd == -1) {
-//         perror("open");
-//         return 1;
-//     }
+    // ファイルを開く
+    fd = open("sample.txt", O_RDONLY);
+	//printf("fd: %d\n", fd);
+    if (fd == -1) {
+        perror("open");
+        return 1;
+    }
 
-//     // ファイルから1行ずつ読み込み、全ての行を出力する
-//     while ((line = get_next_line(fd)) != NULL) {
-//         printf("%s", line);
-// 		fflush(stdout);
-//         free(line); // get_next_line で動的に割り当てられたメモリを解放
-//     }
-
-
+    // ファイルから1行ずつ読み込み、全ての行を出力する
+    while ((line = get_next_line(fd)) != NULL) {
+        printf("%s", line);
+		fflush(stdout);
+        free(line); // get_next_line で動的に割り当てられたメモリを解放
+    }
 
 
 
 
-//     // ファイルを閉じる
-//     close(fd);
 
-//     return 0;
-// }
+
+    // ファイルを閉じる
+    close(fd);
+
+    return 0;
+}
