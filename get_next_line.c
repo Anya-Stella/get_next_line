@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tishihar <wingstonetone9.8@gmail.com>      +#+  +:+       +#+        */
+/*   By: tishihar <tishihar@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/23 19:50:42 by tishihar          #+#    #+#             */
-/*   Updated: 2024/07/02 20:00:04 by tishihar         ###   ########.fr       */
+/*   Updated: 2024/07/02 20:02:38 by tishihar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 // kokokesu
 // #define BUFFER_SIZE 42
-
 
 static void	ft_clean_remainder(char **remainderBox)
 {
@@ -34,7 +33,7 @@ static int	ft_grow_remainder(int fd, char **remainderBox)
 		{
 			if (bytes_read < 0 || **remainderBox == '\0')
 				return (ft_clean_remainder(remainderBox), 0);
-			break;
+			break ;
 		}
 		buffer[bytes_read] = '\0';
 		new_remainder = ft_strjoin(*remainderBox, buffer);
@@ -45,9 +44,6 @@ static int	ft_grow_remainder(int fd, char **remainderBox)
 	}
 	return (1);
 }
-
-
-
 
 static char	*ft_extract_line(char **remainderBox)
 {
@@ -70,17 +66,13 @@ static char	*ft_extract_line(char **remainderBox)
 		ft_clean_remainder(remainderBox);
 	}
 	if ((!*remainderBox && end) || !line)
-		{
-			if (line)
-				free(line);
-			return(ft_clean_remainder(remainderBox), NULL);
-		}
+	{
+		if (line)
+			free(line);
+		return (ft_clean_remainder(remainderBox), NULL);
+	}
 	return (line);
 }
-
-
-
-
 
 char	*get_next_line(int fd)
 {
@@ -97,36 +89,30 @@ char	*get_next_line(int fd)
 	return (ft_extract_line(&remainder));
 }
 
+// #include <stdio.h>
+// #include <fcntl.h>
+// #include <unistd.h>
+// int main() {
+//     int fd;
+//     char *line;
 
-#include <stdio.h>
-#include <fcntl.h>
-#include <unistd.h>
-int main() {
-    int fd;
-    char *line;
+//     // ファイルを開く
+//     fd = open("sample.txt", O_RDONLY);
+// 	//printf("fd: %d\n", fd);
+//     if (fd == -1) {
+//         perror("open");
+//         return (1);
+//     }
 
-    // ファイルを開く
-    fd = open("sample.txt", O_RDONLY);
-	//printf("fd: %d\n", fd);
-    if (fd == -1) {
-        perror("open");
-        return 1;
-    }
+//     // ファイルから1行ずつ読み込み、全ての行を出力する
+//     while ((line = get_next_line(fd)) != NULL) {
+//         printf("%s", line);
+// 		fflush(stdout);
+//         free(line); // get_next_line で動的に割り当てられたメモリを解放
+//     }
 
-    // ファイルから1行ずつ読み込み、全ての行を出力する
-    while ((line = get_next_line(fd)) != NULL) {
-        printf("%s", line);
-		fflush(stdout);
-        free(line); // get_next_line で動的に割り当てられたメモリを解放
-    }
+//     // ファイルを閉じる
+//     close(fd);
 
-
-
-
-
-
-    // ファイルを閉じる
-    close(fd);
-
-    return 0;
-}
+//     return (0);
+// }
