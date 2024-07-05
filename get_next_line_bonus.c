@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tishihar <wingstonetone9.8@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/23 19:50:42 by tishihar          #+#    #+#             */
-/*   Updated: 2024/07/05 14:00:53 by tishihar         ###   ########.fr       */
+/*   Created: 2024/07/05 14:01:50 by tishihar          #+#    #+#             */
+/*   Updated: 2024/07/05 14:36:38 by tishihar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static void	ft_clean_remainder(char **remainderBox)
 {
@@ -80,38 +80,19 @@ static char	*ft_extract_line(char **remainderBox)
 
 char	*get_next_line(int fd)
 {
-	static char	*remainder;
+	static char	*remainder[OPEN_MAX];
 
-	if (!remainder)
+	if (fd < 0 || fd >= OPEN_MAX) {
+        return NULL;
+    }
+
+	if (!remainder[fd])
 	{
-		remainder = ft_strdup("");
-		if (!remainder)
+		remainder[fd] = ft_strdup("");
+		if (!remainder[fd])
 			return (NULL);
 	}
-	if (!ft_grow_remainder(fd, &remainder))
+	if (!ft_grow_remainder(fd, &remainder[fd]))
 		return (NULL);
-	return (ft_extract_line(&remainder));
+	return (ft_extract_line(&remainder[fd]));
 }
-
-
-// #include <stdio.h>
-// #include <fcntl.h>
-// #include <unistd.h>
-// int main() {
-//     int fd;
-//     char *line;
-
-//     // ファイルを開く
-//     fd = open("sample.txt", O_RDONLY);
-//     if (fd == -1) {
-//         perror("open");
-//         return 1;
-//     }
-//     while ((line = get_next_line(fd)) != NULL) {
-//         printf("%s", line);
-// 		fflush(stdout);
-//         free(line);
-//     }
-//     close(fd);
-//     return 0;
-// }
